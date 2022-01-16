@@ -298,9 +298,12 @@ namespace loyverse_bc_print
 
                 File.WriteAllLines(zStockFile, stockArray);
                 GlobalVariables.Logger.WriteToInfoLog("File StockList.csv is generated in " + GlobalVariables.ConfigPath + "\nNumber of Records:" + iRecordCout);
-                S3FileUploader s3FileUploaderObj = new S3FileUploader(GlobalVariables.Ini.IniReadValue("aws", "BucketName"),
-                    GlobalVariables.Ini.IniReadValue("aws", "awsAccessKeyId"), GlobalVariables.Ini.IniReadValue("aws", "awsSecretAccessKey"));
-                s3FileUploaderObj.UploadFile(filename, zStockFile);
+                var bucketName = GlobalVariables.Ini.IniReadValue("aws", "BucketName");
+                if (bucketName != "") { 
+                    S3FileUploader s3FileUploaderObj = new S3FileUploader(bucketName,
+                        GlobalVariables.Ini.IniReadValue("aws", "awsAccessKeyId"), GlobalVariables.Ini.IniReadValue("aws", "awsSecretAccessKey"));
+                    s3FileUploaderObj.UploadFile(filename, zStockFile);
+                }
                 MessageBox.Show(@"Stocks file generated compled in "+ zStockFile, @"Operation Compled! Records: "+ iRecordCout.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)

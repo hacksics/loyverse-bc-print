@@ -138,7 +138,11 @@ namespace loyverse_bc_print
         }
         public int GetNextItemCode()
         {
+            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+            int secondsSinceEpoch = (int)t.TotalSeconds;
+            int iNextItemCode = Convert.ToInt32(((int)secondsSinceEpoch).ToString());
             // Create a Dictionary Code 
+            /*
             Dictionary<string, int> yearCode = new Dictionary<string, int>();
             yearCode.Add("2016", 1);
             yearCode.Add("2017", 2);
@@ -188,8 +192,8 @@ namespace loyverse_bc_print
             {
                 GlobalVariables.Logger.WriteToErrorLog(string.Format("Unable to generate stock number for date {0} counter {1}", zDaysCode, iNextItemCode), "");
             }
-
-            GlobalVariables.Logger.WriteToInfoLog(string.Format("GetNextItemCode:: DaysCode:{0}, LastItemCode:{1}, NextItemCode:{2}", zDaysCode, iLastItemCode, iNextItemCode));
+            */
+            GlobalVariables.Logger.WriteToInfoLog(string.Format("GetNextItemCode:: {0}", iNextItemCode));
             return iNextItemCode;
         }
 
@@ -235,6 +239,7 @@ namespace loyverse_bc_print
            
             string zQuery = string.Format("select ItemCode, DepartmentID, Description, CostPrice, UnitPrice, StockQuantity, VendorID, " +
                 "BarcodeType, LastUpdate from stocks where deleted != '1' and date(LastUpdate) >= '{0}' order by LastUpdate, DepartmentID, ItemCode", formattedDate);
+            GlobalVariables.Logger.WriteToInfoLog(string.Format("select query: {0}", zQuery));
 
             try
             {
