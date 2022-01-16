@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net;
 
 namespace loyverse_bc_print
 {
@@ -304,6 +305,19 @@ namespace loyverse_bc_print
                         GlobalVariables.Ini.IniReadValue("aws", "awsAccessKeyId"), GlobalVariables.Ini.IniReadValue("aws", "awsSecretAccessKey"));
                     s3FileUploaderObj.UploadFile(filename, zStockFile);
                 }
+                var ftpServer = GlobalVariables.Ini.IniReadValue("ftp", "server");
+                if (ftpServer != "")
+                {
+                    WebClient client = new WebClient
+                    {
+                        Credentials = new NetworkCredential(GlobalVariables.Ini.IniReadValue("ftp", "username"),
+                        GlobalVariables.Ini.IniReadValue("ftp", "password"))
+                    };
+                    string ftpUri = string.Format("ftp://{0}/{1}.csv", ftpServer, GlobalVariables.Ini.IniReadValue("ftp", "node"));
+                    client.UploadFile(ftpUri, zStockFile);
+
+                }
+
                 MessageBox.Show(@"Stocks file generated compled in "+ zStockFile, @"Operation Compled! Records: "+ iRecordCout.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
